@@ -1,0 +1,10 @@
+{
+  "id": "local-managed",
+  "label": "Managed local Anvil (Prague)",
+  "kind": "managed-anvil",
+  "chainId": 31337,
+  "hardfork": "prague",
+  "sponsorIndex": 0,
+  "authorityStartIndex": 1,
+  "authorityCount": 7
+}

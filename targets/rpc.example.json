@@ -1,0 +1,42 @@
+{
+  "id": "provider-devnet",
+  "label": "Example external RPC target",
+  "kind": "rpc",
+  "rpcUrl": "https://your-rpc-endpoint.example",
+  "chainId": 31337,
+  "hardfork": "prague",
+  "sponsor": {
+    "address": "0x0000000000000000000000000000000000000000",
+    "privateKey": "0xYOUR_SPONSOR_PRIVATE_KEY"
+  },
+  "authorities": [
+    {
+      "address": "0x0000000000000000000000000000000000000001",
+      "privateKey": "0xYOUR_AUTHORITY_KEY_1"
+    },
+    {
+      "address": "0x0000000000000000000000000000000000000002",
+      "privateKey": "0xYOUR_AUTHORITY_KEY_2"
+    },
+    {
+      "address": "0x0000000000000000000000000000000000000003",
+      "privateKey": "0xYOUR_AUTHORITY_KEY_3"
+    },
+    {
+      "address": "0x0000000000000000000000000000000000000004",
+      "privateKey": "0xYOUR_AUTHORITY_KEY_4"
+    },
+    {
+      "address": "0x0000000000000000000000000000000000000005",
+      "privateKey": "0xYOUR_AUTHORITY_KEY_5"
+    },
+    {
+      "address": "0x0000000000000000000000000000000000000006",
+      "privateKey": "0xYOUR_AUTHORITY_KEY_6"
+    },
+    {
+      "address": "0x0000000000000000000000000000000000000007",
+      "privateKey": "0xYOUR_AUTHORITY_KEY_7"
+    }
+  ]
+}

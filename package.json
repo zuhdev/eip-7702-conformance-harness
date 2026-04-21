@@ -1,0 +1,29 @@
+{
+  "name": "eip-7702-compatibility-test-suite",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Neutral compatibility test harness for EIP-7702. Runs real type-0x04 transactions, authorization tuples, and delegated execution against local nodes or hosted RPC targets, then emits JSON and Markdown reports.",
+  "keywords": [
+    "eip-7702",
+    "ethereum",
+    "pectra",
+    "account-abstraction",
+    "compatibility",
+    "test-suite"
+  ],
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "prototype": "tsx src/cli.ts",
+    "prototype:matrix": "tsx src/cli.ts --matrix",
+    "prototype:list": "tsx src/cli.ts --list-targets",
+    "check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,0 +1,526 @@
+{
+  "suite": "eip-7702-compatibility-test-suite",
+  "version": "0.2.0",
+  "generatedAt": "2026-04-21T10:12:21.877Z",
+  "target": {
+    "id": "local-managed",
+    "label": "Managed local Anvil (Prague)",
+    "kind": "managed-anvil",
+    "rpcUrl": "http://127.0.0.1:50939",
+    "chainId": 31337,
+    "hardfork": "prague"
+  },
+  "fixtures": {
+    "delegationTarget": {
+      "address": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+      "artifactPath": "/Users/vicgunga/EIP-7702 Compatibility Test Suite/out/DelegationTarget.sol/DelegationTarget.json",
+      "runtimeBytecodeSize": 449
+    }
+  },
+  "summary": {
+    "total": 13,
+    "passed": 13,
+    "failed": 0,
+    "skipped": 0
+  },
+  "notes": [
+    "Managed local Anvil targets are pinned to an explicit hardfork so support is deterministic instead of relying on tooling defaults.",
+    "This run uses real raw transaction signing plus JSON-RPC submission rather than mocked transport behavior.",
+    "The fixture contract is deployed fresh per target so each run has isolated execution evidence.",
+    "The report format is designed to extend toward wallet adapters, relayers, and multi-provider CI publishing."
+  ],
+  "tests": [
+    {
+      "id": "transaction.accepts_type_0x04",
+      "title": "Accepts a type-0x04 EIP-7702 transaction",
+      "category": "transaction",
+      "description": "Submits a real type-0x04 transaction with a valid authorization and checks receipt typing plus delegation side effects.",
+      "status": "pass",
+      "durationMs": 34,
+      "assertions": [
+        {
+          "label": "Receipt reports type 0x4",
+          "pass": true,
+          "expected": "0x4",
+          "actual": "0x4"
+        },
+        {
+          "label": "Transaction succeeds",
+          "pass": true,
+          "expected": "0x1",
+          "actual": "0x1"
+        },
+        {
+          "label": "Delegation indicator was written",
+          "pass": true,
+          "expected": "0xef01000000000000000000000000000000000000000001",
+          "actual": "0xef01000000000000000000000000000000000000000001"
+        },
+        {
+          "label": "Authority nonce increments to 1",
+          "pass": true,
+          "expected": "1",
+          "actual": "1"
+        }
+      ],
+      "details": {
+        "transactionHash": "0x2132464393e1c265a92f12bf5e9f2f905f77d787d37628f8136636a35fc4fbdf",
+        "authority": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+        "delegateAddress": "0x0000000000000000000000000000000000000001",
+        "receiptType": "0x4",
+        "code": "0xef01000000000000000000000000000000000000000001"
+      }
+    },
+    {
+      "id": "rpc.estimates_gas_with_authorization_list",
+      "title": "Estimates gas for a delegated EIP-7702 call",
+      "category": "rpc",
+      "description": "Uses eth_estimateGas with an authorizationList payload and delegated calldata to verify that provider-side simulation works before broadcast.",
+      "status": "pass",
+      "durationMs": 39,
+      "assertions": [
+        {
+          "label": "Provider returns a positive gas estimate",
+          "pass": true,
+          "expected": "> 0",
+          "actual": "70730"
+        },
+        {
+          "label": "Estimate exceeds a plain 21k transfer",
+          "pass": true,
+          "expected": "> 21000",
+          "actual": "70730"
+        }
+      ],
+      "details": {
+        "authority": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+        "delegateAddress": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+        "signedAuthorization": "0xf85c827a69945fbdb2315678afecb367f032d93f642f64180aa38001a025624a5a59ba3fd4a8b93d874183eb46eca7a9329a47081954554b3c3fa1e490a06675890c92133c78f8d8bec7781c278758aa19e02084cd44e08b6434d1409dc6",
+        "authorizationListEntry": {
+          "chainId": "0x7a69",
+          "address": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+          "nonce": "0x0",
+          "yParity": "0x01",
+          "r": "0x25624a5a59ba3fd4a8b93d874183eb46eca7a9329a47081954554b3c3fa1e490",
+          "s": "0x6675890c92133c78f8d8bec7781c278758aa19e02084cd44e08b6434d1409dc6"
+        },
+        "calldata": "0x3fb5c1cb000000000000000000000000000000000000000000000000000000000000002a",
+        "estimate": "70730",
+        "estimateHex": "0x1144a"
+      }
+    },
+    {
+      "id": "rpc.eth_call_simulates_delegated_context",
+      "title": "Simulates delegated execution via eth_call",
+      "category": "rpc",
+      "description": "Uses eth_call with an authorizationList payload against a clean authority and checks that delegated execution resolves address(this) to the authority.",
+      "status": "pass",
+      "durationMs": 31,
+      "assertions": [
+        {
+          "label": "Delegated eth_call returns the authority as address(this)",
+          "pass": true,
+          "expected": "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc",
+          "actual": "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc"
+        }
+      ],
+      "details": {
+        "authority": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+        "delegateAddress": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+        "signedAuthorization": "0xf85c827a69945fbdb2315678afecb367f032d93f642f64180aa38001a025624a5a59ba3fd4a8b93d874183eb46eca7a9329a47081954554b3c3fa1e490a06675890c92133c78f8d8bec7781c278758aa19e02084cd44e08b6434d1409dc6",
+        "authorizationListEntry": {
+          "chainId": "0x7a69",
+          "address": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+          "nonce": "0x0",
+          "yParity": "0x01",
+          "r": "0x25624a5a59ba3fd4a8b93d874183eb46eca7a9329a47081954554b3c3fa1e490",
+          "s": "0x6675890c92133c78f8d8bec7781c278758aa19e02084cd44e08b6434d1409dc6"
+        },
+        "calldata": "0x4a5a8a3b",
+        "rawResult": "0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc",
+        "resolvedContext": "0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc"
+      }
+    },
+    {
+      "id": "rpc.eth_call_surfaces_revert_metadata",
+      "title": "Surfaces revert metadata for delegated eth_call",
+      "category": "rpc",
+      "description": "Uses eth_call with an authorizationList payload against a reverting delegated function and verifies that provider error metadata remains actionable.",
+      "status": "pass",
+      "durationMs": 32,
+      "assertions": [
+        {
+          "label": "Provider returns a structured RPC error",
+          "pass": true,
+          "expected": "RpcRequestError",
+          "actual": "RpcRequestError"
+        },
+        {
+          "label": "Error message preserves the revert reason",
+          "pass": true,
+          "expected": "message contains EXPECTED_REVERT",
+          "actual": "eth_call failed [3]: execution reverted: EXPECTED_REVERT"
+        },
+        {
+          "label": "Error data preserves ABI-encoded revert payload",
+          "pass": true,
+          "expected": "0x08c379a0...",
+          "actual": "0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000f45585045435445445f5245564552540000000000000000000000000000000000"
+        }
+      ],
+      "details": {
+        "authority": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+        "delegateAddress": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+        "signedAuthorization": "0xf85c827a69945fbdb2315678afecb367f032d93f642f64180aa38001a025624a5a59ba3fd4a8b93d874183eb46eca7a9329a47081954554b3c3fa1e490a06675890c92133c78f8d8bec7781c278758aa19e02084cd44e08b6434d1409dc6",
+        "authorizationListEntry": {
+          "chainId": "0x7a69",
+          "address": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+          "nonce": "0x0",
+          "yParity": "0x01",
+          "r": "0x25624a5a59ba3fd4a8b93d874183eb46eca7a9329a47081954554b3c3fa1e490",
+          "s": "0x6675890c92133c78f8d8bec7781c278758aa19e02084cd44e08b6434d1409dc6"
+        },
+        "calldata": "0x975af67a",
+        "errorCode": 3,
+        "errorMessage": "eth_call failed [3]: execution reverted: EXPECTED_REVERT",
+        "errorData": "0x08c379a00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000f45585045435445445f5245564552540000000000000000000000000000000000"
+      }
+    },
+    {
+      "id": "authorization.skips_invalid_chain_id",
+      "title": "Skips an authorization with the wrong chain ID",
+      "category": "authorization",
+      "description": "Signs an authorization for a mismatched chain ID and verifies the transaction still mines while the authority remains unchanged.",
+      "status": "pass",
+      "durationMs": 29,
+      "assertions": [
+        {
+          "label": "Transaction still succeeds",
+          "pass": true,
+          "expected": "0x1",
+          "actual": "0x1"
+        },
+        {
+          "label": "Authority code remains empty",
+          "pass": true,
+          "expected": "0x",
+          "actual": "0x"
+        },
+        {
+          "label": "Authority nonce does not change",
+          "pass": true,
+          "expected": "0",
+          "actual": "0"
+        }
+      ],
+      "details": {
+        "transactionHash": "0xa68cabd226908278027db06107ef6e2349581b87c369c98c01bda141865ae350",
+        "authority": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+        "attemptedDelegateAddress": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+        "code": "0x"
+      }
+    },
+    {
+      "id": "authorization.skips_invalid_nonce",
+      "title": "Skips an authorization signed with the wrong nonce",
+      "category": "authorization",
+      "description": "Signs an authorization with a nonce that does not match the authority's current nonce and verifies the outer transaction still mines while the authority remains unchanged.",
+      "status": "pass",
+      "durationMs": 29,
+      "assertions": [
+        {
+          "label": "Transaction still succeeds",
+          "pass": true,
+          "expected": "0x1",
+          "actual": "0x1"
+        },
+        {
+          "label": "Authority code remains empty",
+          "pass": true,
+          "expected": "0x",
+          "actual": "0x"
+        },
+        {
+          "label": "Authority nonce does not change",
+          "pass": true,
+          "expected": "0",
+          "actual": "0"
+        }
+      ],
+      "details": {
+        "transactionHash": "0x3e239268691342b7fa611f7f07373ce323713e6ba1bb8d735594c0e6e2e613ae",
+        "authority": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+        "attemptedDelegateAddress": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+        "attemptedNonce": "99",
+        "code": "0x"
+      }
+    },
+    {
+      "id": "authorization.accepts_chain_id_zero_for_any_chain",
+      "title": "Accepts a chain-agnostic authorization with chain_id = 0",
+      "category": "authorization",
+      "description": "Signs an authorization with chain_id=0 (chain-agnostic per EIP-7702) and verifies it is accepted on the target chain with the expected delegation side effects.",
+      "status": "pass",
+      "durationMs": 38,
+      "assertions": [
+        {
+          "label": "Transaction succeeds",
+          "pass": true,
+          "expected": "0x1",
+          "actual": "0x1"
+        },
+        {
+          "label": "Delegation indicator is written despite chain_id=0",
+          "pass": true,
+          "expected": "0xef01005fbdb2315678afecb367f032d93f642f64180aa3",
+          "actual": "0xef01005fbdb2315678afecb367f032d93f642f64180aa3"
+        },
+        {
+          "label": "Authority nonce increments for the replay-safe authorization",
+          "pass": true,
+          "expected": "1",
+          "actual": "1"
+        }
+      ],
+      "details": {
+        "transactionHash": "0x1273494840fac0e8154b45bfd97ed94e77fac9e47e43fd5d8d25b6994e4ee5e9",
+        "authority": "0xf544a29472D1def6C296dd967368b019BD2e7F30",
+        "delegateAddress": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+        "authorization": "0xf85a80945fbdb2315678afecb367f032d93f642f64180aa38080a0c01a0c31a7559206e862e6879cf814fa51a4d311df9e914df9204ddc0f9d2a4da015e95c774cb0983504dc285ea844611c89aa6c26f5c728cea4b4c1e6097e2cd7",
+        "code": "0xef01005fbdb2315678afecb367f032d93f642f64180aa3"
+      }
+    },
+    {
+      "id": "authorization.overwrites_existing_delegation",
+      "title": "Overwrites an existing delegation with a new target",
+      "category": "authorization",
+      "description": "Delegates an authority to the fixture contract, then re-delegates the same authority to a different target and verifies the indicator swaps while the nonce increments twice.",
+      "status": "pass",
+      "durationMs": 63,
+      "assertions": [
+        {
+          "label": "First delegation transaction succeeds",
+          "pass": true,
+          "expected": "0x1",
+          "actual": "0x1"
+        },
+        {
+          "label": "First indicator points at the fixture",
+          "pass": true,
+          "expected": "0xef01005fbdb2315678afecb367f032d93f642f64180aa3",
+          "actual": "0xef01005fbdb2315678afecb367f032d93f642f64180aa3"
+        },
+        {
+          "label": "Second delegation transaction succeeds",
+          "pass": true,
+          "expected": "0x1",
+          "actual": "0x1"
+        },
+        {
+          "label": "Second indicator overwrites the first",
+          "pass": true,
+          "expected": "0xef01000000000000000000000000000000000000000001",
+          "actual": "0xef01000000000000000000000000000000000000000001"
+        },
+        {
+          "label": "Authority nonce increments twice",
+          "pass": true,
+          "expected": "2",
+          "actual": "2"
+        }
+      ],
+      "details": {
+        "authority": "0x27b123F04815e3e44E342E3eAda7ED83146249E7",
+        "firstTransactionHash": "0x47a515b1493f5344304360a7e4b53b0e0f1d2e2524e48543009f1576991cf4e1",
+        "secondTransactionHash": "0x650fae8b275d92afe3be84e153fd9d4162b22262e859a0302c84ef6eb6f31a91",
+        "firstDelegateAddress": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+        "secondDelegateAddress": "0x0000000000000000000000000000000000000001",
+        "firstCode": "0xef01005fbdb2315678afecb367f032d93f642f64180aa3",
+        "secondCode": "0xef01000000000000000000000000000000000000000001"
+      }
+    },
+    {
+      "id": "authorization.clears_with_zero_address",
+      "title": "Clears delegation when the authorized address is zero",
+      "category": "authorization",
+      "description": "Applies a valid delegation first, then sends a second valid authorization to the zero address and verifies that the authority code is cleared.",
+      "status": "pass",
+      "durationMs": 55,
+      "assertions": [
+        {
+          "label": "Initial delegation succeeds",
+          "pass": true,
+          "expected": "0x1",
+          "actual": "0x1"
+        },
+        {
+          "label": "Clearing transaction succeeds",
+          "pass": true,
+          "expected": "0x1",
+          "actual": "0x1"
+        },
+        {
+          "label": "Authority code is cleared",
+          "pass": true,
+          "expected": "0x",
+          "actual": "0x"
+        },
+        {
+          "label": "Authority nonce increments twice",
+          "pass": true,
+          "expected": "2",
+          "actual": "2"
+        }
+      ],
+      "details": {
+        "initialTransactionHash": "0x6ba8ef2cac014e165f1cc0af6dd5918ad16cb28441e2ed7170bdff52fe929739",
+        "clearingTransactionHash": "0x16bce4d4e535f7d160a48d3d5df2c84bfca9c279e9d3e78268df01cef2ad7b10",
+        "authority": "0x90F79bf6EB2c4f870365E785982E1f101E93b906",
+        "code": "0x"
+      }
+    },
+    {
+      "id": "authorization.writes_contract_delegate_indicator",
+      "title": "Writes a delegation indicator for a contract target",
+      "category": "authorization",
+      "description": "Applies a valid authorization that points to the deployed fixture contract and verifies that the indicator and nonce update match the expected contract delegation path.",
+      "status": "pass",
+      "durationMs": 27,
+      "assertions": [
+        {
+          "label": "Contract-target authorization transaction succeeds",
+          "pass": true,
+          "expected": "0x1",
+          "actual": "0x1"
+        },
+        {
+          "label": "Indicator points at the deployed fixture contract",
+          "pass": true,
+          "expected": "0xef01005fbdb2315678afecb367f032d93f642f64180aa3",
+          "actual": "0xef01005fbdb2315678afecb367f032d93f642f64180aa3"
+        },
+        {
+          "label": "Authority nonce increments once for the valid authorization",
+          "pass": true,
+          "expected": "1",
+          "actual": "1"
+        }
+      ],
+      "details": {
+        "transactionHash": "0xf3cb48e1bb390a99b3eb41cb3c33b428b92978b34d85d9fc00d0d603a528c604",
+        "authority": "0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65",
+        "delegateAddress": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+        "code": "0xef01005fbdb2315678afecb367f032d93f642f64180aa3"
+      }
+    },
+    {
+      "id": "execution.delegated_storage_write",
+      "title": "Executes delegated contract logic in authority storage context",
+      "category": "execution",
+      "description": "Delegates an authority to the fixture contract, writes storage through the delegated entrypoint, and reads it back from the authority address.",
+      "status": "pass",
+      "durationMs": 43,
+      "assertions": [
+        {
+          "label": "Delegated storage write transaction succeeds",
+          "pass": true,
+          "expected": "0x1",
+          "actual": "0x1"
+        },
+        {
+          "label": "Authority storage reflects the delegated write",
+          "pass": true,
+          "expected": "42",
+          "actual": "42"
+        },
+        {
+          "label": "address(this) resolves to the authority during delegated execution",
+          "pass": true,
+          "expected": "0x9965507d1a55bcc2695c58ba16fb37d819b0a4dc",
+          "actual": "0x9965507d1a55bcc2695c58ba16fb37d819b0a4dc"
+        }
+      ],
+      "details": {
+        "transactionHash": "0xc760c16f45ffdf89dc4a5aa354f61ccd790869463f8d92902a4e92e3dd056a99",
+        "authority": "0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc",
+        "delegateAddress": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+        "storedNumber": "42",
+        "contextAddress": "0x9965507d1a55bcc2695c58ba16fb37d819b0a4dc"
+      }
+    },
+    {
+      "id": "execution.delegation_persists_after_revert",
+      "title": "Keeps delegation even when outer execution reverts",
+      "category": "execution",
+      "description": "Delegates an authority and immediately calls a reverting function through the delegated code path to confirm the code write survives a failed execution.",
+      "status": "pass",
+      "durationMs": 27,
+      "assertions": [
+        {
+          "label": "Outer execution reverts",
+          "pass": true,
+          "expected": "0x0",
+          "actual": "0x0"
+        },
+        {
+          "label": "Delegation indicator still persists",
+          "pass": true,
+          "expected": "0xef01005fbdb2315678afecb367f032d93f642f64180aa3",
+          "actual": "0xef01005fbdb2315678afecb367f032d93f642f64180aa3"
+        },
+        {
+          "label": "Authority nonce still increments for the valid authorization",
+          "pass": true,
+          "expected": "1",
+          "actual": "1"
+        }
+      ],
+      "details": {
+        "transactionHash": "0xbe8574a92ff94b07882261cb4607641b98ebda38ebf3f3ccc3d63e482b492e83",
+        "authority": "0x976EA74026E726554dB657fA54763abd0C3a0aa9",
+        "code": "0xef01005fbdb2315678afecb367f032d93f642f64180aa3"
+      }
+    },
+    {
+      "id": "execution.codesize_vs_extcodesize",
+      "title": "Shows delegated execution code lens differences",
+      "category": "execution",
+      "description": "Delegates an authority to the fixture contract and verifies that delegated execution sees the target runtime code size while external inspection sees the short delegation indicator.",
+      "status": "pass",
+      "durationMs": 36,
+      "assertions": [
+        {
+          "label": "Setup delegation transaction succeeds",
+          "pass": true,
+          "expected": "0x1",
+          "actual": "0x1"
+        },
+        {
+          "label": "Delegated execution sees the fixture runtime size",
+          "pass": true,
+          "expected": "449",
+          "actual": "449"
+        },
+        {
+          "label": "External code size of the authority matches the 23-byte delegation indicator",
+          "pass": true,
+          "expected": "23",
+          "actual": "23"
+        },
+        {
+          "label": "Authority code stores the fixture delegation indicator",
+          "pass": true,
+          "expected": "0xef01005fbdb2315678afecb367f032d93f642f64180aa3",
+          "actual": "0xef01005fbdb2315678afecb367f032d93f642f64180aa3"
+        }
+      ],
+      "details": {
+        "setupTransactionHash": "0x9be504fbc2b5900233adff93c80b5576142008462ba0f8a859db81a8a58ea7fe",
+        "authority": "0x14dC79964da2C08b23698B3D3cc7Ca32193d9955",
+        "runtimeCodeSize": "449",
+        "authorityExtCodeSize": "23",
+        "code": "0xef01005fbdb2315678afecb367f032d93f642f64180aa3"
+      }
+    }
+  ]
+}

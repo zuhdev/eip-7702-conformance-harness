@@ -1,0 +1,30 @@
+{
+  "suite": "eip-7702-compatibility-test-suite",
+  "version": "0.2.0",
+  "generatedAt": "2026-04-21T10:12:40.089Z",
+  "summary": {
+    "totalTargets": 1,
+    "passingTargets": 1,
+    "failingTargets": 0
+  },
+  "notes": [
+    "Matrix mode compiles the fixture once and then executes the same test plan against each target sequentially.",
+    "Targets that fail during setup or transport initialization are captured in the matrix index without aborting the remaining runs."
+  ],
+  "targets": [
+    {
+      "id": "local-managed",
+      "label": "Managed local Anvil (Prague)",
+      "kind": "managed-anvil",
+      "status": "pass",
+      "targetSummary": {
+        "total": 13,
+        "passed": 13,
+        "failed": 0,
+        "skipped": 0
+      },
+      "reportJsonPath": "local-managed/report.json",
+      "reportMarkdownPath": "local-managed/report.md"
+    }
+  ]
+}
