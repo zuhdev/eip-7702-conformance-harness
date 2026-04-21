@@ -1,5 +1,7 @@
 # EIP-7702 Compatibility Test Suite
 
+[![CI](https://github.com/mtuneccessary/eip-7702-compatibility-test-suite/actions/workflows/ci.yml/badge.svg)](https://github.com/mtuneccessary/eip-7702-compatibility-test-suite/actions/workflows/ci.yml)
+
 A neutral, open-source compatibility harness for [EIP-7702](https://eips.ethereum.org/EIPS/eip-7702). It answers one question for wallet, client, and provider teams:
 
 > **What works, where, and under what conditions?**
@@ -133,6 +135,10 @@ Each run writes:
 - `reports/latest/report.json` — machine-readable run report
 - `reports/latest/report.md` — human-readable run report
 - `reports/matrix/latest/index.{json,md}` — cross-target summary when multiple targets run
+
+## Continuous integration
+
+Every push and pull request to `main` runs the full managed-Anvil suite in GitHub Actions. The workflow installs Foundry (`anvil`, `cast`, `forge`) and the pinned `solc`, runs the TypeScript typecheck, executes the suite end-to-end, and uploads `reports/latest/` as a `compatibility-report` artifact. A failing test fails the build, so regressions show up as a red check on the PR. Workflow source: [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
 ## Target configs
 
